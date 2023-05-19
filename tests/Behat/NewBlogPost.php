@@ -21,13 +21,19 @@ class NewBlogPost implements Context
    */
   public function iHaveAnInstanceOfBlogService()
   {
-      $this->entityManager = m::mock(EntityManagerInterface::class);
-      $this->elasticService = m::mock(ElasticService::class);
+      $this->entityManager = m::mock(EntityManagerInterface::class,
+          [
+              'persist' => null,
+              'flush' => null,
+              'isOpen' => null,
+          ]
+      );
 
-      $this->entityManager->allows('persist');
-      $this->entityManager->allows('isOpen')->andReturn(true);
-      $this->entityManager->allows('flush');
-      $this->elasticService->allows('index');
+      $this->elasticService = m::mock(ElasticService::class,
+          [
+              'index' => null,
+          ]
+      );
 
       $this->blogService = new BlogService($this->entityManager, $this->elasticService);
   }
